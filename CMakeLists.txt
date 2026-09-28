@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 # C is enabled although no C is compiled here: HandleLLVMOptions probes flags
 # with check_c_compiler_flag, and hard-errors if the C compiler is unknown.
 project(ZeroAnalysis LANGUAGES C CXX)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #===----------------------------------------------------------------------===#
 # Locate MLIR
 #
