@@ -9,7 +9,7 @@ make
 ## Running
 
 ```sh
-mlir-opt --load-pass-plugin=build/ZeroAnalysis.dylib --pass-pipeline='builtin.module(known-bits)' sqlite3.mlir -o /dev/null 2>&1 
+mlir-opt --load-pass-plugin=build/KnownBitsAnalysis.dylib --pass-pipeline='builtin.module(known-bits)' sqlite3.mlir -o /dev/null 2>&1 
 ```
 
 Get input in the LLVM dialect from C with:
