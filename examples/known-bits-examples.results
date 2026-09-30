@@ -1,0 +1,37 @@
+# KnownBitsAnalysis example results
+
+Generated with:
+
+```sh
+mlir-opt --load-pass-plugin=build/KnownBitsAnalysis.dylib \
+  --pass-pipeline='builtin.module(known-bits)' \
+  examples/known-bits-examples.mlir -o /dev/null 2>&1
+```
+
+## Checked results
+
+| Program/value | Observed annotation | Expected | Check |
+|---|---|---|---|
+| `constant_arithmetic/%sum` | `0b...00110111` | 55 | pass |
+| `constant_arithmetic/%difference` | `0b...00011101` | 29 | pass |
+| `constant_arithmetic/%product` | `0b...1000100010` | 546 | pass |
+| `constant_arithmetic/%combined` | `0b...1001011001` | 601 | pass |
+| `unknown_input/%plus_zero` | `0b???...???` | all bits unknown | pass |
+| `unknown_input/%minus_self` | `0b???...???` | conservative all bits unknown | pass |
+| `unknown_input/%times_eight` | `0b???...???000` | low three bits known zero | pass |
+| `annihilator/%result` | `0b000...000` | all bits known zero | pass |
+
+`0b...` abbreviates leading zeroes from the 64-bit annotation. The complete
+annotations for the passing constant cases were:
+
+```text
+%sum        = 0b0000000000000000000000000000000000000000000000000000000000110111
+%difference = 0b0000000000000000000000000000000000000000000000000000000000011101
+%product    = 0b0000000000000000000000000000000000000000000000000000001000100010
+%combined   = 0b0000000000000000000000000000000000000000000000000000001001011001
+```
+
+The unknown-input cases are regression probes for function argument
+initialization. Function arguments begin as `KnownBits::unknown()`, rather
+than the distinct uninitialized lattice-bottom value, so arithmetic transfer
+functions receive conservative facts and can retain provable bits.
